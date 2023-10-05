@@ -1,15 +1,5 @@
 class Team < ApplicationRecord
   belongs_to :tournament
-
-  enum stage: %i[
-    registration
-    divisions
-    playoffs
-    completed
-  ].index_with(&:to_s)
-
-  enum divison: %i[
-    division_a
-    division_b
-  ].index_with(&:to_s)
+  has_many :matches_as_team_a, :class_name => 'Match', :foreign_key => 'team_a_id'
+  has_many :matches_as_team_b, :class_name => 'Match', :foreign_key => 'team_b_id'
 end

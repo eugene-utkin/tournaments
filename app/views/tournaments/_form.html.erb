@@ -1,5 +1,9 @@
-<%= form_for @tournament do |tournament_form| %>
+<% matches = @tournament.matches %>
+<% devision_matches = @tournament.matches.where.not(stage: 'playoff') if !matches.empty? %>
+<% devision_a_matches = @tournament.matches.where(stage: 'division_a') if devision_matches %>
+<% devision_b_matches = @tournament.matches.where(stage: 'division_b') if devision_matches %>
 
+<%= form_for @tournament do |tournament_form| %>
   <div>
     <%= tournament_form.label 'Tournament Name' %>
     <%= tournament_form.text_field :name %>
@@ -7,18 +11,33 @@
 
   <br/>
 
-  <div>
-    Teams:
-  </div>
-  <div>
-    <% index = 1 %>
-    <%= tournament_form.fields_for :teams, @tournament_teams do |team_fields| %>
-      <%= index %>
-      <%= render 'team_fields', f: team_fields %>
-      <% index += 1 %>
-      <br/>
-    <% end %>
-  <div>
+  <% if devision_matches.empty? %>
+    <div>
+      Teams:
+    </div>
+    <div>
+      <% index = 1 %>
+      <%= tournament_form.fields_for :teams, @tournament_teams do |team_fields| %>
+        <%= index %>
+        <%= render 'team_fields', f: team_fields %>
+        <% index += 1 %>
+        <br/>
+      <% end %>
+    <div>
+  <% else %>
+    <div>
+      Matches:
+    </div>
+    <div>
+      <% index = 1 %>
+      <%= tournament_form.fields_for :matches, devision_a_matches do |match_fields| %>
+        <%= index %>
+        <%= render 'match_fields', f: match_fields %>
+        <% index += 1 %>
+        <br/>
+      <% end %>
+    <div>
+  <% end %>
 
   <br/>
 

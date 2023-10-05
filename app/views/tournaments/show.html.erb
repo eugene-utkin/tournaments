@@ -1,19 +1,53 @@
-<h1><%= @tournament.name %></h1>
+<% matches = @tournament.matches %>
+<% devision_matches = @tournament.matches.where.not(stage: 'playoff') if !matches.empty? %>
+<% devision_a_matches = @tournament.matches.where(stage: 'division_a') if devision_matches %>
+<% devision_b_matches = @tournament.matches.where(stage: 'division_b') if devision_matches %>
+
 <%= link_to "All Tournaments", tournaments_path %>
-<br/>
-<br/>
-Participating Teams:
-<br/>
-<% @tournament_teams_with_names.each_with_index do |team, team_i| %>
-    <%= "#{team_i + 1}. #{team.name}" %>
-    <br/>
+<h1><%= @tournament.name %></h1>
+
+<% if !@tournament_teams_with_names.empty? %>
+  <h2>Participating Teams:</h2>
+  <% @tournament_teams_with_names.each_with_index do |team, team_i| %>
+      <%= "#{team_i + 1}. #{team.name}" %>
+      <br/>
+  <% end %>
+  <br/>
+<% end %>
+
+<% if devision_matches %>
+  <h2>Devision A:</h2>
+  <% devision_a_matches.each_with_index do |match, match_i| %>
+      <%= "Match #{match_i + 1}: #{match.team_a.name} VS #{match.team_b.name}. Result: #{humanize_match_result(match)}" %>
+      <br/>
+      <br/>
+  <% end %>
+  <br/>
+
+  <h2>Devision B:</h2>
+  <% devision_b_matches.each_with_index do |match, match_i| %>
+      <%= "Match #{match_i + 1}: #{match.team_a.name} VS #{match.team_b.name}. Result: #{humanize_match_result(match)}" %>
+      <br/>
+      <br/>
+  <% end %>
+  <br/>
+<% end %>
+
+
+<% if matches.empty? %>
+  <%= link_to @tournament_teams_with_names.empty? ? "Add Teams" : "Edit Teams List", edit_tournament_path(@tournament) %>
+<% else %>
+  <%= link_to "Add Results for Division Matches", edit_tournament_path(@tournament) %>
 <% end %>
 <br/>
-<%= link_to "Edit Teams List", edit_tournament_path(@tournament) %>
+<br/>
 <% if @tournament_teams_with_names.count != 16 %>
   <%= button_to "Create Random Teams", create_random_teams_tournament_path %>
 <% end %>
-<%= button_to "Create Division Matches", create_division_matches_tournament_path, disabled: @tournament_teams_with_names.count != 16 %>
-<% if @tournament_teams_with_names.count != 16 %>
-  (You can only create division matches if you have 16 teams)
+
+<% if matches.empty? %>
+  <%= button_to "Create Division Matches", create_matches_tournament_path, disabled: @tournament_teams_with_names.count != 16 %>
+  <% if @tournament_teams_with_names.count != 16 %>
+    (You can only create division matches if you have 16 teams)
+  <% end %>
 <% end %>
