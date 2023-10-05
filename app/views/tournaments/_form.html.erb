@@ -1,9 +1,26 @@
 <%= form_for @tournament do |tournament_form| %>
 
   <div>
-    <%= tournament_form.label :name %>
+    <%= tournament_form.label 'Tournament Name' %>
     <%= tournament_form.text_field :name %>
   </div>
+
+  <br/>
+
+  <div>
+    Teams:
+  </div>
+  <div>
+    <% index = 1 %>
+    <%= tournament_form.fields_for :teams, @tournament_teams do |team_fields| %>
+      <%= index %>
+      <%= render 'team_fields', f: team_fields %>
+      <% index += 1 %>
+      <br/>
+    <% end %>
+  <div>
+
+  <br/>
 
   <div>
     <%= tournament_form.submit "Submit" %>

@@ -1,14 +1,12 @@
 <h1>Tournaments</h1>
-<%= link_to "Add tournament", new_tournament_path %>
+<%= link_to "Add Tournament", new_tournament_path %>
 <br/>
 <br/>
 <% @tournaments.each do |tournament| %>
-  <%= tournament.name %>
+  <%= link_to tournament.name, tournament_path(tournament) %>
   <br/>
   Status: <%= tournament.stage %>
   <br/>
-  <%= link_to "Show", tournament_path(tournament) %>
-  <%= link_to "Edit", edit_tournament_path(tournament) %>
   <%= button_to 'Delete', tournament, method: :delete,
                 form: {data: {turbo_confirm: 'Are you sure?'}} %>
   <br/>

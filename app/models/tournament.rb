@@ -1,8 +1,7 @@
 class Tournament < ApplicationRecord
   has_many :teams, dependent: :destroy
 
-  accepts_nested_attributes_for :teams,
-                                allow_destroy: true
+  accepts_nested_attributes_for :teams
 
   enum stage: %i[
     registration

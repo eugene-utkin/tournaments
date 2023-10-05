@@ -1,2 +1,19 @@
 <h1><%= @tournament.name %></h1>
-<%= link_to "All tournaments", tournaments_path %>
+<%= link_to "All Tournaments", tournaments_path %>
+<br/>
+<br/>
+Participating Teams:
+<br/>
+<% @tournament_teams_with_names.each_with_index do |team, team_i| %>
+    <%= "#{team_i + 1}. #{team.name}" %>
+    <br/>
+<% end %>
+<br/>
+<%= link_to "Edit Teams List", edit_tournament_path(@tournament) %>
+<% if @tournament_teams_with_names.count != 16 %>
+  <%= button_to "Create Random Teams", create_random_teams_tournament_path %>
+<% end %>
+<%= button_to "Create Division Matches", create_division_matches_tournament_path, disabled: @tournament_teams_with_names.count != 16 %>
+<% if @tournament_teams_with_names.count != 16 %>
+  (You can only create division matches if you have 16 teams)
+<% end %>

@@ -1,5 +1,5 @@
 class TournamentsController < ApplicationController
-  before_action :set_tournament, only: [:show, :edit, :update, :destroy]
+  before_action :set_tournament, :set_tournament_teams, only: [:show, :edit, :update, :destroy]
   before_action :set_new_tournament, only: [:new, :create]
 
   def index
@@ -8,13 +8,18 @@ class TournamentsController < ApplicationController
 
   def show; end
 
-  def new; end
+  def new
+    @tournament_teams = []
+    16.times do
+      @tournament_teams << Team.new
+    end
+  end
 
   def create
     @tournament.assign_attributes(tournament_params)
 
     if @tournament.save
-      redirect_to tournament_url(@tournament), notice: t(".success")
+      redirect_to tournament_url(@tournament), notice: 'Success!'
     else
       flash.now[:alert] = @tournament.errors.full_messages
       render 'new'
@@ -37,10 +42,25 @@ class TournamentsController < ApplicationController
     redirect_to tournaments_url, notice: 'Success!'
   end
 
+  def create_random_teams
+    tournament = Tournament.new(name: "Random Tournament")
+    16.times do |i|
+      tournament.teams << Team.new(name: (i + 1).to_s)
+    end
+    if tournament.save
+      redirect_to tournament_url(tournament), notice: 'Success!'
+    else
+      flash.now[:alert] = tournament.errors.full_messages
+      render 'new'
+    end
+  end
+
   private
 
   def tournament_params
-    params.require(:tournament).permit(:name)
+    params.require(:tournament).permit(:name, {
+      teams_attributes: [:id, :name]
+    })
   end
 
   def set_tournament
@@ -49,5 +69,10 @@ class TournamentsController < ApplicationController
 
   def set_new_tournament
     @tournament = Tournament.new
+  end
+
+  def set_tournament_teams
+    @tournament_teams = @tournament.teams
+    @tournament_teams_with_names = @tournament_teams.where.not(name: "")
   end
 end
