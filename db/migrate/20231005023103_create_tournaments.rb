@@ -3,7 +3,7 @@ class CreateTournaments < ActiveRecord::Migration[7.0]
     execute <<~SQL
       CREATE TYPE tournament_stage
       AS ENUM(
-          'start',
+          'registration',
           'divisions',
           'playoffs',
           'completed'
@@ -12,7 +12,7 @@ class CreateTournaments < ActiveRecord::Migration[7.0]
 
     create_table :tournaments do |t|
       t.string :name
-      t.column :stage, :tournament_stage, null: false, default: "start"
+      t.column :stage, :tournament_stage, null: false, default: 'registration'
 
       t.timestamps
     end

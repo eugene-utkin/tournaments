@@ -16,11 +16,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_023103) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "tournament_stage", ["start", "divisions", "playoffs", "completed"]
+  create_enum "tournament_stage", ["registration", "divisions", "playoffs", "completed"]
 
   create_table "tournaments", force: :cascade do |t|
     t.string "name"
-    t.enum "stage", default: "start", null: false, enum_type: "tournament_stage"
+    t.enum "stage", default: "registration", null: false, enum_type: "tournament_stage"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

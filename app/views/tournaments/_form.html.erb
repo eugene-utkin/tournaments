@@ -1,0 +1,12 @@
+<%= form_for @tournament do |tournament_form| %>
+
+  <div>
+    <%= tournament_form.label :name %>
+    <%= tournament_form.text_field :name %>
+  </div>
+
+  <div>
+    <%= tournament_form.submit "Submit" %>
+  </div>
+
+<% end %>

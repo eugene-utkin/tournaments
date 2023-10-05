@@ -3,12 +3,10 @@ class TournamentsController < ApplicationController
   before_action :set_new_tournament, only: [:new, :create]
 
   def index
-
+    @tournaments = Tournament.all
   end
 
-  def show
-
-  end
+  def show; end
 
   def new; end
 
@@ -21,6 +19,22 @@ class TournamentsController < ApplicationController
       flash.now[:alert] = @tournament.errors.full_messages
       render 'new'
     end
+  end
+
+  def edit; end
+
+  def update
+    if @tournament.update(tournament_params)
+      redirect_to tournament_url(@tournament), notice: 'Success!'
+    else
+      flash.now[:alert] = @tournament.errors.full_messages
+      render 'edit'
+    end
+  end
+
+  def destroy
+    @tournament.destroy
+    redirect_to tournaments_url, notice: 'Success!'
   end
 
   private
