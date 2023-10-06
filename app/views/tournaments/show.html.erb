@@ -1,7 +1,7 @@
 <% matches = @tournament.matches %>
 <% devision_matches = @tournament.matches.where.not(stage: 'playoff') if !matches.empty? %>
-<% devision_a_matches = @tournament.matches.where(stage: 'division_a') if devision_matches %>
-<% devision_b_matches = @tournament.matches.where(stage: 'division_b') if devision_matches %>
+<% devision_a_matches = @tournament.matches.where(stage: 'division_a').order(:created_at) if devision_matches %>
+<% devision_b_matches = @tournament.matches.where(stage: 'division_b').order(:created_at) if devision_matches %>
 
 <%= link_to "All Tournaments", tournaments_path %>
 <h1><%= @tournament.name %></h1>

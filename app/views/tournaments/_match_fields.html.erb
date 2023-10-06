@@ -1,0 +1,2 @@
+<%= ". Team A: #{f.object.team_a.name}. Team B: #{f.object.team_b.name}. Result: " %>
+<%= f.select :result, Match.results.keys.map { |w| [w, w] } %>

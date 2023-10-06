@@ -70,6 +70,8 @@ class TournamentsController < ApplicationController
   def tournament_params
     params.require(:tournament).permit(:name, {
       teams_attributes: [:id, :name]
+    }, {
+      matches_attributes: [:id, :result]
     })
   end
 
