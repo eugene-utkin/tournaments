@@ -1,6 +1,6 @@
 class TournamentsController < ApplicationController
   before_action :set_tournament, :set_tournament_teams, except: [:new, :create, :index]
-  before_action :set_variables, only: [:show, :edit, :create_random_division_a_results, :create_random_division_b_results]
+  before_action :set_variables, only: [:show, :edit, :create_random_division_a_results, :create_random_division_b_results, :create_random_playoff_results]
   before_action :set_new_tournament, only: [:new, :create]
 
   def index
@@ -52,12 +52,7 @@ class TournamentsController < ApplicationController
       @tournament.create_playoff_matches
     end
 
-    if @tournament.save
-      redirect_to tournament_url(@tournament), notice: 'Success!'
-    else
-      flash.now[:alert] = @tournament.errors.full_messages
-      render 'new'
-    end
+    redirect_to tournament_url(@tournament), notice: 'Success!'
   end
 
   def create_random_division_a_results
@@ -66,6 +61,20 @@ class TournamentsController < ApplicationController
 
   def create_random_division_b_results
     create_random_match_results(@division_b_matches)
+  end
+
+  def create_random_playoff_results
+    create_random_match_results(@max_round_playoff_matches)
+  end
+
+  def finish
+    @tournament.stage = 'completed'
+    if @tournament.save
+      redirect_to tournament_url(@tournament), notice: 'Success!'
+    else
+      flash.now[:alert] = @tournament.errors.full_messages
+      render 'new'
+    end
   end
 
   private
@@ -102,8 +111,9 @@ class TournamentsController < ApplicationController
     @division_a_matches_with_results = @division_a_matches.where.not(result: 'not_played_yet') if @division_a_matches
     @division_b_matches_with_results = @division_b_matches.where.not(result: 'not_played_yet') if @division_b_matches
     @playoff_matches = @matches.where(stage: 'playoff') if !@matches.empty?
-    @max_playoff_round = @playoff_matches.sort_by { -_1.playoff_number }.first.playoff_number if !@playoff_matches.empty?
+    @max_playoff_round = @tournament.max_playoff_round if !@playoff_matches.empty?
     @max_round_playoff_matches = @playoff_matches.where(playoff_number: @max_playoff_round).order(:created_at) if !@playoff_matches.empty?
+    @max_round_playoff_matches_with_results = @max_round_playoff_matches.where.not(result: 'not_played_yet') if @max_round_playoff_matches
   end
 
   def set_new_tournament

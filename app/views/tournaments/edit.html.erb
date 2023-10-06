@@ -9,4 +9,9 @@
   <% if !@division_b_matches_with_results || @division_b_matches_with_results.count != @division_b_matches.count %>
     <%= button_to "Create Random Results for Division B", create_random_division_b_results_tournament_path %>
   <% end %>
+  <% if @max_round_playoff_matches %>
+    <% if !@max_round_playoff_matches_with_results || @max_round_playoff_matches_with_results.count != @max_round_playoff_matches.count %>
+      <%= button_to "Create Random Results for Playoff Round #{@max_playoff_round} Matches", create_random_playoff_results_tournament_path %>
+    <% end %>
+  <% end %>
 <% end %>

@@ -41,7 +41,7 @@
     <br/>
   <% end %>
 
-  <h2>Playoff matches:</h2>
+  <h2>Playoff Matches:</h2>
   <% @max_playoff_round.times do |i| %>
     <h3><%= "Round #{i + 1}:" %></h3>
     <% round_playoffs = @playoff_matches.where(playoff_number: i + 1).order(:created_at) %>
@@ -53,6 +53,10 @@
   <% end %>
 <% end %>
 
+<% if @tournament.stage == 'completed' %>
+  <h2><%= "WINNER: #{@max_round_playoff_matches[0].match_winner.name}" %></h2>
+<% end %>
+
 
 <% if @matches.empty? %>
   <%= link_to @tournament_teams_with_names.empty? ? "Add Teams" : "Edit Teams List", edit_tournament_path(@tournament) %>
@@ -60,7 +64,9 @@
   <% if @playoff_matches.empty? %>
     <%= link_to "Add Results for Division Matches", edit_tournament_path(@tournament) %>
   <% else %>
-    <%= link_to "Add Results for Playoff Matches", edit_tournament_path(@tournament) %>
+    <% if @tournament.stage != 'completed' %>
+      <%= link_to "Add Results for Playoff Matches", edit_tournament_path(@tournament) %>
+    <% end %>
   <% end %>
 <% end %>
 <br/>
@@ -82,9 +88,18 @@
     <%= button_to "Create Random Results for Division B", create_random_division_b_results_tournament_path %>
   <% end %>
   <% if @division_matches %>
-    <%= button_to "Create Playoff Matches", create_matches_tournament_path, disabled: @divison_matches_with_results.count != @division_matches.count %>
-    <% if @divison_matches_with_results.count != @division_matches.count %>
-      (You can only create playoff matches if all division matches have results.)
+    <% if !@max_round_playoff_matches || @max_round_playoff_matches.count != 1 %>
+      <%= button_to "Create Playoff Matches", create_matches_tournament_path, disabled: @divison_matches_with_results.count != @division_matches.count %>
+      <% if @divison_matches_with_results.count != @division_matches.count %>
+        (You can only create playoff matches if all division matches have results.)
+      <% end %>
+    <% else %>
+      <% if @tournament.stage != 'completed' %>
+        <%= button_to "Finish Tournament", finish_tournament_path, disabled: @max_round_playoff_matches[0].result == 'not_played_yet' %>
+        <% if @max_round_playoff_matches[0].result == 'not_played_yet' %>
+          (You can only finish tournament if the last match is concluded.)
+        <% end %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>

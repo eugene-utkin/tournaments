@@ -14,4 +14,20 @@ class Match < ApplicationRecord
     team_a_won
     team_b_won
   ].index_with(&:to_s)
+
+  def match_winner
+    if result == 'team_a_won'
+      team_a
+    elsif result == 'team_b_won'
+      team_b
+    end
+  end
+
+  def match_looser
+    if result == 'team_a_won'
+      team_b
+    elsif result == 'team_b_won'
+      team_a
+    end
+  end
 end
