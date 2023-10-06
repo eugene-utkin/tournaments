@@ -1,8 +1,3 @@
-<% matches = @tournament.matches %>
-<% devision_matches = @tournament.matches.where.not(stage: 'playoff') if !matches.empty? %>
-<% devision_a_matches = @tournament.matches.where(stage: 'division_a').order(:created_at) if devision_matches %>
-<% devision_b_matches = @tournament.matches.where(stage: 'division_b').order(:created_at) if devision_matches %>
-
 <%= link_to "All Tournaments", tournaments_path %>
 <h1><%= @tournament.name %></h1>
 
@@ -15,17 +10,17 @@
   <br/>
 <% end %>
 
-<% if devision_matches %>
-  <h2>Devision A:</h2>
-  <% devision_a_matches.each_with_index do |match, match_i| %>
+<% if @division_matches %>
+  <h2>Division A:</h2>
+  <% @division_a_matches.each_with_index do |match, match_i| %>
       <%= "Match #{match_i + 1}: #{match.team_a.name} VS #{match.team_b.name}. Result: #{humanize_match_result(match)}" %>
       <br/>
       <br/>
   <% end %>
   <br/>
 
-  <h2>Devision B:</h2>
-  <% devision_b_matches.each_with_index do |match, match_i| %>
+  <h2>Division B:</h2>
+  <% @division_b_matches.each_with_index do |match, match_i| %>
       <%= "Match #{match_i + 1}: #{match.team_a.name} VS #{match.team_b.name}. Result: #{humanize_match_result(match)}" %>
       <br/>
       <br/>
@@ -34,7 +29,7 @@
 <% end %>
 
 
-<% if matches.empty? %>
+<% if @matches.empty? %>
   <%= link_to @tournament_teams_with_names.empty? ? "Add Teams" : "Edit Teams List", edit_tournament_path(@tournament) %>
 <% else %>
   <%= link_to "Add Results for Division Matches", edit_tournament_path(@tournament) %>
@@ -45,9 +40,22 @@
   <%= button_to "Create Random Teams", create_random_teams_tournament_path %>
 <% end %>
 
-<% if matches.empty? %>
+<% if @matches.empty? %>
   <%= button_to "Create Division Matches", create_matches_tournament_path, disabled: @tournament_teams_with_names.count != 16 %>
   <% if @tournament_teams_with_names.count != 16 %>
     (You can only create division matches if you have 16 teams)
+  <% end %>
+<% else %>
+  <% if !@division_a_matches_with_results || @division_a_matches_with_results.count != @division_a_matches.count %>
+    <%= button_to "Create Random Results for Division A", create_random_division_a_results_tournament_path %>
+  <% end %>
+  <% if !@division_b_matches_with_results || @division_b_matches_with_results.count != @division_b_matches.count %>
+    <%= button_to "Create Random Results for Division B", create_random_division_b_results_tournament_path %>
+  <% end %>
+  <% if @division_matches %>
+    <%= button_to "Create Playoff Matches", create_matches_tournament_path, disabled: @divison_matches_with_results.count != @division_matches.count %>
+    <% if @divison_matches_with_results.count != @division_matches.count %>
+      (You can only create playoff matches if all division matches have results.)
+    <% end %>
   <% end %>
 <% end %>

@@ -11,8 +11,7 @@ class CreateMatches < ActiveRecord::Migration[7.0]
       AS ENUM(
           'not_played_yet',
           'team_a_won',
-          'team_b_won',
-          'draw'
+          'team_b_won'
         );
     SQL
 

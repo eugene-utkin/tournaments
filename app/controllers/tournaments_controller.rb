@@ -1,5 +1,5 @@
 class TournamentsController < ApplicationController
-  before_action :set_tournament, :set_tournament_teams, only: [:show, :edit, :update, :destroy, :create_matches]
+  before_action :set_variables, except: [:new, :create, :index]
   before_action :set_new_tournament, only: [:new, :create]
 
   def index
@@ -38,16 +38,10 @@ class TournamentsController < ApplicationController
   end
 
   def create_random_teams
-    tournament = Tournament.new(name: "Random Tournament")
-    16.times do |i|
-      tournament.teams << Team.new(name: (i + 1).to_s)
+    @tournament_teams.each_with_index do |team, team_i|
+      team.update!(name: (team_i + 1).to_s)
     end
-    if tournament.save
-      redirect_to tournament_url(tournament), notice: 'Success!'
-    else
-      flash.now[:alert] = tournament.errors.full_messages
-      render 'new'
-    end
+    redirect_to tournament_url(@tournament), notice: 'Success!'
   end
 
   def create_matches
@@ -65,6 +59,14 @@ class TournamentsController < ApplicationController
     end
   end
 
+  def create_random_division_a_results
+    create_random_match_results(@division_a_matches)
+  end
+
+  def create_random_division_b_results
+    create_random_match_results(@division_b_matches)
+  end
+
   private
 
   def tournament_params
@@ -75,21 +77,37 @@ class TournamentsController < ApplicationController
     })
   end
 
-  def set_tournament
+  def set_variables
     @tournament = Tournament.find(params[:id])
+    @tournament_teams = @tournament.teams
+    if @tournament_teams.empty?
+      16.times do
+        @tournament_teams << Team.new
+      end
+      @tournament.save!
+    end
+    @tournament_teams_with_names = @tournament_teams.where.not(name: "")
+    @matches = @tournament.matches
+    @division_matches = @matches.where.not(stage: 'playoff') if !@matches.empty?
+    @divison_matches_with_results = @division_matches.where.not(result: 'not_played_yet') if @division_matches
+    @division_a_matches = @division_matches.where(stage: 'division_a').order(:created_at) if @division_matches
+    @division_b_matches = @division_matches.where(stage: 'division_b').order(:created_at) if @division_matches
+    @division_a_matches_with_results = @division_a_matches.where.not(result: 'not_played_yet') if @division_a_matches
+    @division_b_matches_with_results = @division_b_matches.where.not(result: 'not_played_yet') if @division_b_matches
   end
 
   def set_new_tournament
     @tournament = Tournament.new
   end
 
-  def set_tournament_teams
-    @tournament_teams = @tournament.teams
-    if @tournament_teams.empty?
-      16.times do
-        @tournament_teams << Team.new
+  def create_random_match_results(matches)
+    matches.each do |match|
+      if rand >= 0.5
+        match.update!(result: 'team_a_won')
+      else
+        match.update!(result: 'team_b_won')
       end
     end
-    @tournament_teams_with_names = @tournament_teams.where.not(name: "")
+    redirect_to tournament_url(@tournament), notice: 'Success!'
   end
 end

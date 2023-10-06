@@ -1,8 +1,12 @@
 <h1><%= @tournament.name %></h1>
 <%= render 'form' %>
-<% if @tournament.matches.empty? %>
+<% if @matches.empty? %>
   <%= button_to "Create Random Teams", create_random_teams_tournament_path %>
 <% else %>
-  <%= button_to "Create Random Results for Division A", create_random_teams_tournament_path %>
-  <%= button_to "Create Random Results for Division B", create_random_teams_tournament_path %>
+  <% if !@division_a_matches_with_results || @division_a_matches_with_results.count != @division_a_matches.count %>
+    <%= button_to "Create Random Results for Division A", create_random_division_a_results_tournament_path %>
+  <% end %>
+  <% if !@division_b_matches_with_results || @division_b_matches_with_results.count != @division_b_matches.count %>
+    <%= button_to "Create Random Results for Division B", create_random_division_b_results_tournament_path %>
+  <% end %>
 <% end %>

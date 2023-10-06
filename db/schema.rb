@@ -16,7 +16,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_144352) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "match_result", ["not_played_yet", "team_a_won", "team_b_won", "draw"]
+  create_enum "match_result", ["not_played_yet", "team_a_won", "team_b_won"]
   create_enum "match_stage", ["division_a", "division_b", "playoff"]
   create_enum "tournament_stage", ["registration", "divisions", "playoffs", "completed"]
 

@@ -13,6 +13,5 @@ class Match < ApplicationRecord
     not_played_yet
     team_a_won
     team_b_won
-    draw
   ].index_with(&:to_s)
 end
