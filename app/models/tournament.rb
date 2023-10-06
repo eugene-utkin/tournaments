@@ -1,16 +1,25 @@
 class Tournament < ApplicationRecord
+  enum stage: %i[
+    in_progress
+    completed
+  ].index_with(&:to_s)
+
+  NUMBER_OF_TEAMS = 16
+  NUMBER_OF_DIVISION_WINNERS = 4
+
   has_many :teams, dependent: :destroy
   has_many :matches, dependent: :destroy
 
   accepts_nested_attributes_for :teams
   accepts_nested_attributes_for :matches
 
-  enum stage: %i[
-    registration
-    divisions
-    playoffs
-    completed
-  ].index_with(&:to_s)
+  validates :name, presence: true
+
+  before_create do
+    NUMBER_OF_TEAMS.times do
+      teams << Team.new
+    end
+  end
 
   def create_division_matches
     shuffled_teams = teams.shuffle
@@ -83,6 +92,6 @@ class Tournament < ApplicationRecord
       results[match.match_looser] ||= 0
       results[match.match_winner] += 1
     end
-    results.sort_by { -_2 }.first(4)
+    results.sort_by { -_2 }.first(NUMBER_OF_DIVISION_WINNERS)
   end
 end

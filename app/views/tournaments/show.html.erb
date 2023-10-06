@@ -28,7 +28,7 @@
   <br/>
 <% end %>
 
-<% if !@playoff_matches.empty? %>
+<% if @playoff_matches && !@playoff_matches.empty? %>
   <h2>Division A Matches Results:</h2>
   <% @tournament.best_division_a_teams.each_with_index do |best_div_a_team, best_div_a_team_i| %>
     <%= "#{best_div_a_team_i + 1}. #{best_div_a_team[0].name}: #{best_div_a_team[1]} pts." %>
@@ -71,14 +71,14 @@
 <% end %>
 <br/>
 <br/>
-<% if @tournament_teams_with_names.count != 16 %>
+<% if @tournament_teams_with_names.count != Tournament::NUMBER_OF_TEAMS %>
   <%= button_to "Create Random Teams", create_random_teams_tournament_path %>
 <% end %>
 
 <% if @matches.empty? %>
-  <%= button_to "Create Division Matches", create_matches_tournament_path, disabled: @tournament_teams_with_names.count != 16 %>
-  <% if @tournament_teams_with_names.count != 16 %>
-    (You can only create division matches if you have 16 teams)
+  <%= button_to "Create Division Matches", create_matches_tournament_path, disabled: @tournament_teams_with_names.count != Tournament::NUMBER_OF_TEAMS %>
+  <% if @tournament_teams_with_names.count != Tournament::NUMBER_OF_TEAMS %>
+    <%= "(You can only create division matches if you have #{Tournament::NUMBER_OF_TEAMS} teams)" %>
   <% end %>
 <% else %>
   <% if !@division_a_matches_with_results || @division_a_matches_with_results.count != @division_a_matches.count %>
@@ -88,9 +88,12 @@
     <%= button_to "Create Random Results for Division B", create_random_division_b_results_tournament_path %>
   <% end %>
   <% if @division_matches %>
+    <% if @max_round_playoff_matches && @max_round_playoff_matches_with_results.count != @max_round_playoff_matches.count %>
+      <%= button_to "Create Random Results for Playoff Round #{@max_playoff_round} Matches", create_random_playoff_results_tournament_path %>
+    <% end %>
     <% if !@max_round_playoff_matches || @max_round_playoff_matches.count != 1 %>
-      <%= button_to "Create Playoff Matches", create_matches_tournament_path, disabled: @divison_matches_with_results.count != @division_matches.count %>
-      <% if @divison_matches_with_results.count != @division_matches.count %>
+      <%= button_to "Create Playoff Matches", create_matches_tournament_path, disabled: @divison_matches_with_results.count != @division_matches.count || (@max_round_playoff_matches && @max_round_playoff_matches_with_results.count != @max_round_playoff_matches.count) %>
+      <% if @divison_matches_with_results.count != @division_matches.count || (@max_round_playoff_matches && @max_round_playoff_matches_with_results.count != @max_round_playoff_matches.count) %>
         (You can only create playoff matches if all division matches have results.)
       <% end %>
     <% else %>

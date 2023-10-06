@@ -3,16 +3,14 @@ class CreateTournaments < ActiveRecord::Migration[7.0]
     execute <<~SQL
       CREATE TYPE tournament_stage
       AS ENUM(
-          'registration',
-          'divisions',
-          'playoffs',
+          'in_progress',
           'completed'
         );
     SQL
 
     create_table :tournaments do |t|
-      t.string :name
-      t.column :stage, :tournament_stage, null: false, default: 'registration'
+      t.string :name, null: false
+      t.column :stage, :tournament_stage, null: false, default: 'in_progress'
 
       t.timestamps
     end

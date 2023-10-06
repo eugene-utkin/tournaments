@@ -20,7 +20,7 @@
       <% end %>
     <div>
   <% else %>
-    <% if !@max_round_playoff_matches %>
+    <% if @max_round_playoff_matches.empty? %>
       <div>
         Division A Matches:
       </div>

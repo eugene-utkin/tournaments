@@ -30,4 +30,12 @@ class Match < ApplicationRecord
       team_a
     end
   end
+
+  def create_random_result
+    if rand >= 0.5
+      update!(result: 'team_a_won')
+    else
+      update!(result: 'team_b_won')
+    end
+  end
 end

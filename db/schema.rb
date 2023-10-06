@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_144352) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "match_result", ["not_played_yet", "team_a_won", "team_b_won"]
   create_enum "match_stage", ["division_a", "division_b", "playoff"]
-  create_enum "tournament_stage", ["registration", "divisions", "playoffs", "completed"]
+  create_enum "tournament_stage", ["in_progress", "completed"]
 
   create_table "matches", force: :cascade do |t|
     t.integer "playoff_number", default: 0, null: false
@@ -43,8 +43,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_144352) do
   end
 
   create_table "tournaments", force: :cascade do |t|
-    t.string "name"
-    t.enum "stage", default: "registration", null: false, enum_type: "tournament_stage"
+    t.string "name", null: false
+    t.enum "stage", default: "in_progress", null: false, enum_type: "tournament_stage"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
