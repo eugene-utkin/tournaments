@@ -1,5 +1,6 @@
 class TournamentsController < ApplicationController
-  before_action :set_variables, except: [:new, :create, :index]
+  before_action :set_tournament, :set_tournament_teams, except: [:new, :create, :index]
+  before_action :set_variables, only: [:show, :edit, :create_random_division_a_results, :create_random_division_b_results]
   before_action :set_new_tournament, only: [:new, :create]
 
   def index
@@ -77,8 +78,11 @@ class TournamentsController < ApplicationController
     })
   end
 
-  def set_variables
+  def set_tournament
     @tournament = Tournament.find(params[:id])
+  end
+
+  def set_tournament_teams
     @tournament_teams = @tournament.teams
     if @tournament_teams.empty?
       16.times do
@@ -86,6 +90,9 @@ class TournamentsController < ApplicationController
       end
       @tournament.save!
     end
+  end
+
+  def set_variables
     @tournament_teams_with_names = @tournament_teams.where.not(name: "")
     @matches = @tournament.matches
     @division_matches = @matches.where.not(stage: 'playoff') if !@matches.empty?
@@ -94,6 +101,9 @@ class TournamentsController < ApplicationController
     @division_b_matches = @division_matches.where(stage: 'division_b').order(:created_at) if @division_matches
     @division_a_matches_with_results = @division_a_matches.where.not(result: 'not_played_yet') if @division_a_matches
     @division_b_matches_with_results = @division_b_matches.where.not(result: 'not_played_yet') if @division_b_matches
+    @playoff_matches = @matches.where(stage: 'playoff') if !@matches.empty?
+    @max_playoff_round = @playoff_matches.sort_by { -_1.playoff_number }.first.playoff_number if !@playoff_matches.empty?
+    @max_round_playoff_matches = @playoff_matches.where(playoff_number: @max_playoff_round).order(:created_at) if !@playoff_matches.empty?
   end
 
   def set_new_tournament

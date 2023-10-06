@@ -20,31 +20,47 @@
       <% end %>
     <div>
   <% else %>
-    <div>
-      Division A Matches:
-    </div>
-    <div>
-      <% index = 1 %>
-      <%= tournament_form.fields_for :matches, @division_a_matches do |match_fields| %>
-        <%= index %>
-        <%= render 'match_fields', f: match_fields %>
-        <% index += 1 %>
-        <br/>
-      <% end %>
-    <div>
-    <br/>
-    <div>
-      Division B Matches:
-    </div>
-    <div>
-      <% index = 1 %>
-      <%= tournament_form.fields_for :matches, @division_b_matches do |match_fields| %>
-        <%= index %>
-        <%= render 'match_fields', f: match_fields %>
-        <% index += 1 %>
-        <br/>
-      <% end %>
-    <div>
+    <% if !@max_round_playoff_matches %>
+      <div>
+        Division A Matches:
+      </div>
+      <div>
+        <% index = 1 %>
+        <%= tournament_form.fields_for :matches, @division_a_matches do |match_fields| %>
+          <%= index %>
+          <%= render 'match_fields', f: match_fields %>
+          <% index += 1 %>
+          <br/>
+        <% end %>
+      <div>
+      <br/>
+      <div>
+        Division B Matches:
+      </div>
+      <div>
+        <% index = 1 %>
+        <%= tournament_form.fields_for :matches, @division_b_matches do |match_fields| %>
+          <%= index %>
+          <%= render 'match_fields', f: match_fields %>
+          <% index += 1 %>
+          <br/>
+        <% end %>
+      <div>
+    <% else %>
+      <div>
+        <%= "Playoff Round #{@max_playoff_round} Matches:" %>
+      </div>
+      <div>
+        <% index = 1 %>
+        <%= tournament_form.fields_for :matches, @max_round_playoff_matches do |match_fields| %>
+          <%= index %>
+          <%= render 'match_fields', f: match_fields %>
+          <% index += 1 %>
+          <br/>
+        <% end %>
+      <div>
+      <br/>
+    <% end %>
   <% end %>
 
   <br/>

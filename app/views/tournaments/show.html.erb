@@ -28,11 +28,40 @@
   <br/>
 <% end %>
 
+<% if !@playoff_matches.empty? %>
+  <h2>Division A Matches Results:</h2>
+  <% @tournament.best_division_a_teams.each_with_index do |best_div_a_team, best_div_a_team_i| %>
+    <%= "#{best_div_a_team_i + 1}. #{best_div_a_team[0].name}: #{best_div_a_team[1]} pts." %>
+    <br/>
+  <% end %>
+
+  <h2>Division B Matches Results:</h2>
+  <% @tournament.best_division_b_teams.each_with_index do |best_div_b_team, best_div_b_team_i| %>
+    <%= "#{best_div_b_team_i + 1}. #{best_div_b_team[0].name}: #{best_div_b_team[1]} pts." %>
+    <br/>
+  <% end %>
+
+  <h2>Playoff matches:</h2>
+  <% @max_playoff_round.times do |i| %>
+    <h3><%= "Round #{i + 1}:" %></h3>
+    <% round_playoffs = @playoff_matches.where(playoff_number: i + 1).order(:created_at) %>
+    <% round_playoffs.each_with_index do |match, match_i| %>
+      <%= "Match #{match_i + 1}: #{match.team_a.name} VS #{match.team_b.name}. Result: #{humanize_match_result(match)}" %>
+      <br/>
+      <br/>
+    <% end %>
+  <% end %>
+<% end %>
+
 
 <% if @matches.empty? %>
   <%= link_to @tournament_teams_with_names.empty? ? "Add Teams" : "Edit Teams List", edit_tournament_path(@tournament) %>
 <% else %>
-  <%= link_to "Add Results for Division Matches", edit_tournament_path(@tournament) %>
+  <% if @playoff_matches.empty? %>
+    <%= link_to "Add Results for Division Matches", edit_tournament_path(@tournament) %>
+  <% else %>
+    <%= link_to "Add Results for Playoff Matches", edit_tournament_path(@tournament) %>
+  <% end %>
 <% end %>
 <br/>
 <br/>
